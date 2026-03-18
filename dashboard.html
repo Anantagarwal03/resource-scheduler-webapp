@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Smart Resource Booking</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body class="dashboard-page">
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <h2>SRB</h2>
+    <ul>
+      <li class="active" onclick="showSection('dashboard', this)">Dashboard</li>
+      <li onclick="showSection('bookings', this)">Bookings</li>
+      <li onclick="showSection('settings', this)">Settings</li>
+    </ul>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div>
+  <h2>Dashboard</h2>
+  <p id="welcomeUser" style="font-size:13px; color:#94a3b8;"></p>
+</div>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="dashboard-section">
+
+      <!-- STATS -->
+      <div class="grid">
+        <div class="card">
+          <h3>Total Bookings</h3>
+          <p id="total">0</p>
+        </div>
+
+        <div class="card">
+          <h3>Available Rooms</h3>
+          <p id="available">5</p>
+        </div>
+
+        <div class="card">
+          <h3>Usage Rate</h3>
+          <p id="usage">0%</p>
+        </div>
+      </div>
+
+      <!-- BOOKING FIRST -->
+      <div class="grid">
+        <div class="card">
+          <h3>Book Resource</h3>
+          <input type="text" id="resource" placeholder="Enter resource">
+          <button onclick="book()">Book</button>
+        </div>
+
+        <div class="card">
+          <h3>Your Bookings</h3>
+          <ul id="user-list"></ul>
+        </div>
+      </div>
+
+      <!-- CHART AFTER -->
+      <div class="card">
+        <h3>Booking Activity</h3>
+        <canvas id="chart"></canvas>
+      </div>
+
+    </div>
+
+    <!-- BOOKINGS PAGE -->
+    <div id="bookings-section" style="display:none;">
+      <div class="card">
+        <h3>All Bookings</h3>
+        <ul id="all-list"></ul>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div id="settings-section" style="display:none;">
+      <div class="card">
+        <h3>Settings</h3>
+        <p>Basic settings can be added here.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="js/dashboard.js"></script>
+<script src="js/chart.js"></script>
+
+</body>
+</html>
