@@ -6,7 +6,7 @@ This project focuses on clean UI, basic authentication, and a user-specific book
 ---
 
 ## 🔗 Live Demo
-https://your-vercel-link.vercel.app
+https://resource-scheduler-webapp.vercel.app
 
 ---
 
