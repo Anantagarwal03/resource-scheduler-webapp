@@ -33,18 +33,21 @@
 
     <!-- TOPBAR -->
     <div class="topbar">
-      <div>
+      <div class="topbar-left">
   <h2>Dashboard</h2>
-  <p id="welcomeUser" style="font-size:13px; color:#94a3b8;"></p>
 </div>
-      <button class="logout-btn" onclick="logout()">Logout</button>
+
+<div class="topbar-right">
+  <span id="welcomeUser" class="welcome-text"></span>
+  <button class="logout-btn" onclick="logout()">Logout</button>
+</div>
     </div>
 
     <!-- DASHBOARD -->
     <div id="dashboard-section">
 
       <!-- STATS -->
-      <div class="grid">
+      <div class="grid-3">
         <div class="card">
           <h3>Total Bookings</h3>
           <p id="total">0</p>
@@ -107,7 +110,13 @@
   <h3>Change Password</h3>
 
   <div class="form-group">
-  <input type="password" id="newPassword" placeholder="Enter new password">
+  <input type="password" id="newPassword" placeholder="Enter new password" oninput="checkStrength()">
+</div>
+
+<p id="strengthText" class="strength-text"></p>
+
+<div class="form-group">
+  <input type="password" id="confirmPassword" placeholder="Confirm password">
   <button class="primary-btn" onclick="changePassword()">Update Password</button>
 </div>
 

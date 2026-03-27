@@ -50,7 +50,10 @@ function book() {
   const input = document.getElementById("resource");
   const value = input.value.trim();
 
-  if (!value) return;
+  if (!value) {
+  alert("Enter a resource name");
+  return;
+}
 
   const booking = {
     name: value,
@@ -90,7 +93,7 @@ function render() {
   userList.innerHTML = "";
   allList.innerHTML = "";
 
-  welcome.innerText = "Welcome, " + currentUser;
+welcome.innerText = "👋 Hello, " + currentUser;
 
   // ✅ EMPTY STATE
   if (bookings.length === 0) {
@@ -141,9 +144,9 @@ function updateChart() {
 
   let countMap = {};
 
-  bookings.forEach(b => {
-    countMap[b.name] = (countMap[b.name] || 0) + 1;
-  });
+  Object.values(allBookings).flat().forEach(b => {
+  countMap[b.name] = (countMap[b.name] || 0) + 1;
+});
 
   let labels = Object.keys(countMap);
   let data = Object.values(countMap);
@@ -168,8 +171,37 @@ function updateChart() {
       }]
     },
     options: {
-      responsive: true
+  responsive: true,
+  interaction: {
+  mode: 'index',
+  intersect: false
+},
+  plugins: {
+    legend: {
+      labels: {
+        color: "#cbd5f5"
+      }
     }
+  },
+  scales: {
+    x: {
+      ticks: {
+        color: "#94a3b8"
+      },
+      grid: {
+        display: false
+      }
+    },
+    y: {
+      ticks: {
+        color: "#94a3b8"
+      },
+      grid: {
+        color: "rgba(255,255,255,0.05)"
+      }
+    }
+  }
+}
   });
 }
 
@@ -195,6 +227,22 @@ render();
 
 // ================= SETTINGS =================
 
+function checkStrength() {
+  const pass = document.getElementById("newPassword").value;
+  const text = document.getElementById("strengthText");
+
+  if (pass.length < 6) {
+    text.innerText = "Weak password";
+    text.className = "strength-text strength-weak";
+  } else if (pass.length < 10) {
+    text.innerText = "Medium strength";
+    text.className = "strength-text strength-medium";
+  } else {
+    text.innerText = "Strong password";
+    text.className = "strength-text strength-strong";
+  }
+}
+
 // Show email
 document.getElementById("userEmail").innerText = currentUser;
 
@@ -206,10 +254,22 @@ function changePassword() {
   return;
 }
 
-  if (!newPass) {
-    alert("Enter new password");
-    return;
-  }
+  const confirmPass = document.getElementById("confirmPassword").value;
+
+if (!newPass || !confirmPass) {
+  alert("Fill all fields");
+  return;
+}
+
+if (newPass !== confirmPass) {
+  alert("Passwords do not match");
+  return;
+}
+
+if (newPass.length < 6) {
+  alert("Password must be at least 6 characters");
+  return;
+}
 
   let users = JSON.parse(localStorage.getItem("users")) || [];
 

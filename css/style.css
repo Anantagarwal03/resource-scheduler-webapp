@@ -63,11 +63,11 @@ html, body {
 }
 
 /* TEXT */
-.logo {
+/* LOGIN TITLE (OLD SRB TEXT) */
+.login-title {
   text-align: center;
   color: #22c55e;
   font-size: 28px;
-  margin-bottom: 10px;
 }
 
 h2 {
@@ -420,4 +420,117 @@ button {
 
 .setting-box:hover {
   transform: translateY(-2px);
+}
+
+.strength-text {
+  font-size: 13px;
+  margin-top: 5px;
+}
+
+.strength-weak { color: #ef4444; }
+.strength-medium { color: #f59e0b; }
+.strength-strong { color: #22c55e; }
+
+.topbar h2 {
+  font-size: 22px;
+}
+
+.topbar p {
+  margin-top: 3px;
+}
+
+.card h3 {
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+input {
+  background: #0f172a;
+  color: white;
+}
+
+/* LOGIN LOGO */
+.login-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.login-logo img {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+}
+
+.login-logo h2 {
+  color: #22c55e;
+  font-size: 24px;
+}
+
+.login-logo img {
+  box-shadow: 0 0 15px rgba(34,197,94,0.5);
+}
+
+canvas {
+  margin-top: 10px;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* LEFT SIDE */
+.topbar-left h2 {
+  font-size: 22px;
+}
+
+/* RIGHT SIDE */
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.welcome-text {
+  font-size: 15px;
+  color: #e2e8f0;
+  font-weight: 500;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 20px; /* increased spacing */
+}
+
+.welcome-text {
+  background: rgba(255,255,255,0.05);
+  padding: 6px 10px;
+  border-radius: 6px;
+}
+
+.card p {
+  font-size: 22px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.topbar {
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  padding-bottom: 10px;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 20px;
 }

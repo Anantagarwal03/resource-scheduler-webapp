@@ -10,9 +10,12 @@ function updateChart() {
     data: {
       labels: bookings.map((_, i) => "B" + (i+1)),
       datasets: [{
-        label: 'Bookings',
-        data: bookings.map((_, i) => i + 1),
-      }]
+  label: "Bookings per Resource",
+  data: data,
+  backgroundColor: "#22c55e",
+  borderRadius: 6,
+  barThickness: 40
+}]
     }
   });
 }
