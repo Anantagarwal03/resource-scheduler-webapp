@@ -4,6 +4,7 @@
   <title>Smart Resource Booking</title>
   <link rel="stylesheet" href="css/style.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="icon" href="assets/logo.png">
 </head>
 
 <body class="dashboard-page">
@@ -12,13 +13,20 @@
 
   <!-- SIDEBAR -->
   <div class="sidebar">
+
+  <!-- LOGO SECTION -->
+  <div class="logo">
+    <img src="assets/logo.png" alt="SRB Logo">
     <h2>SRB</h2>
-    <ul>
-      <li class="active" onclick="showSection('dashboard', this)">Dashboard</li>
-      <li onclick="showSection('bookings', this)">Bookings</li>
-      <li onclick="showSection('settings', this)">Settings</li>
-    </ul>
   </div>
+
+  <ul>
+    <li class="active" onclick="showSection('dashboard', this)">Dashboard</li>
+    <li onclick="showSection('bookings', this)">Bookings</li>
+    <li onclick="showSection('settings', this)">Settings</li>
+  </ul>
+
+</div>
 
   <!-- MAIN -->
   <div class="main">
@@ -84,12 +92,38 @@
     </div>
 
     <!-- SETTINGS -->
-    <div id="settings-section" style="display:none;">
-      <div class="card">
-        <h3>Settings</h3>
-        <p>Basic settings can be added here.</p>
-      </div>
+    <!-- SETTINGS -->
+<div id="settings-section" style="display:none;">
+
+  <div class="settings-container">
+
+    <h2>Account Settings</h2>
+
+    <div class="setting-box">
+      <p><strong>Email:</strong> <span id="userEmail"></span></p>
     </div>
+
+    <div class="setting-box">
+  <h3>Change Password</h3>
+
+  <div class="form-group">
+  <input type="password" id="newPassword" placeholder="Enter new password">
+  <button class="primary-btn" onclick="changePassword()">Update Password</button>
+</div>
+
+<p id="passwordMsg" class="success-msg"></p>
+
+</div>
+
+    <div class="setting-box danger">
+  <h3>Danger Zone</h3>
+  <p class="danger-text">This will permanently delete all your bookings.</p>
+  <button onclick="clearBookings()">Clear My Bookings</button>
+</div>
+
+  </div>
+
+</div>
 
   </div>
 </div>

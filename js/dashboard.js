@@ -1,13 +1,38 @@
-let allBookings = JSON.parse(localStorage.getItem("bookings")) || {};
+let stored = JSON.parse(localStorage.getItem("bookings")) || {};
+
+let allBookings;
+
+if (typeof stored !== "object" || stored === null) {
+  console.warn("Invalid bookings format. Resetting...");
+  stored = {};
+  localStorage.setItem("bookings", JSON.stringify(stored));
+}
+
+// 🔥 HANDLE OLD FORMAT (array → object)
+if (Array.isArray(stored)) {
+  allBookings = {};
+
+  stored.forEach(b => {
+    if (!allBookings[b.user]) {
+      allBookings[b.user] = [];
+    }
+    allBookings[b.user].push(b);
+  });
+
+  // Save corrected format
+  localStorage.setItem("bookings", JSON.stringify(allBookings));
+} else {
+  allBookings = stored;
+}
 
 let userData = JSON.parse(localStorage.getItem("loggedInUser"));
 
-// 🔒 PROTECT DASHBOARD
-if (!userData) {
+// 🔒 STRICT PROTECTION (FIXED)
+if (!userData || !userData.email) {
   window.location.href = "index.html";
 }
 
-let currentUser = userData ? userData.email : "User";
+let currentUser = userData.email;
 
 // 👤 Per-user bookings
 let bookings = allBookings[currentUser] || [];
@@ -102,6 +127,11 @@ function render() {
   available.innerText = availableRooms;
   usage.innerText = usagePercent + "%";
 
+  // 🔍 DEBUG (optional)
+  // console.log("Current User:", currentUser);
+  // console.log("All Bookings:", allBookings);
+  // console.log("User Bookings:", bookings);
+
   updateChart();
 }
 
@@ -117,6 +147,12 @@ function updateChart() {
 
   let labels = Object.keys(countMap);
   let data = Object.values(countMap);
+
+  // ✅ FIX: Handle empty chart
+  if (labels.length === 0) {
+    labels = ["No Data"];
+    data = [0];
+  }
 
   if (myChart) {
     myChart.destroy();
@@ -156,3 +192,53 @@ function logout() {
 }
 
 render();
+
+// ================= SETTINGS =================
+
+// Show email
+document.getElementById("userEmail").innerText = currentUser;
+
+// Change password
+function changePassword() {
+  const newPass = document.getElementById("newPassword").value;
+  if (newPass.length < 6) {
+  alert("Password must be at least 6 characters");
+  return;
+}
+
+  if (!newPass) {
+    alert("Enter new password");
+    return;
+  }
+
+  let users = JSON.parse(localStorage.getItem("users")) || [];
+
+  users = users.map(u => {
+    if (u.email === currentUser) {
+      return { ...u, password: newPass };
+    }
+    return u;
+  });
+localStorage.setItem("users", JSON.stringify(users));
+
+const msg = document.getElementById("passwordMsg");
+msg.innerText = "Password updated successfully!";
+msg.style.display = "block";
+
+setTimeout(() => {
+  msg.style.display = "none";
+}, 2000);
+
+document.getElementById("newPassword").value = "";
+}
+
+// Clear bookings
+function clearBookings() {
+  if (!confirm("Delete all your bookings?")) return;
+
+  bookings = [];
+  allBookings[currentUser] = bookings;
+  localStorage.setItem("bookings", JSON.stringify(allBookings));
+
+  render();
+}
