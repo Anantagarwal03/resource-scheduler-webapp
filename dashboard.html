@@ -21,10 +21,10 @@
   </div>
 
   <ul>
-    <li class="active" onclick="showSection('dashboard', this)">Dashboard</li>
-    <li onclick="showSection('bookings', this)">Bookings</li>
-    <li onclick="showSection('settings', this)">Settings</li>
-  </ul>
+  <li id="nav-dashboard" class="active">Dashboard</li>
+  <li id="nav-bookings">Bookings</li>
+  <li id="nav-settings">Settings</li>
+</ul>
 
 </div>
 
@@ -69,7 +69,7 @@
         <div class="card">
           <h3>Book Resource</h3>
           <input type="text" id="resource" placeholder="Enter resource">
-          <button onclick="book()">Book</button>
+          <button id="bookBtn">Book</button>
         </div>
 
         <div class="card">
@@ -138,7 +138,6 @@
 </div>
 
 <script src="js/dashboard.js"></script>
-<script src="js/chart.js"></script>
 
 </body>
 </html>

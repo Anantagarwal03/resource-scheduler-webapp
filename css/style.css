@@ -88,6 +88,8 @@ input {
   margin-top: 12px;
   border-radius: 10px;
   border: none;
+  background: #0f172a;
+  color: white;
 }
 
 /* PASSWORD */
@@ -361,12 +363,6 @@ button {
 
 .form-group input {
   flex: 1;
-  padding: 12px;
-  border-radius: 8px;
-  border: none;
-  background: #0f172a;
-  color: white;
-  outline: none;
 }
 
 .form-group input::placeholder {
@@ -448,10 +444,6 @@ button:hover {
   opacity: 0.9;
 }
 
-input {
-  background: #0f172a;
-  color: white;
-}
 
 /* LOGIN LOGO */
 .login-logo {
@@ -479,12 +471,6 @@ input {
 
 canvas {
   margin-top: 10px;
-}
-
-.topbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 }
 
 /* LEFT SIDE */
@@ -533,4 +519,20 @@ canvas {
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
   margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+  .app {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+  }
+
+  .grid, .grid-3 {
+    grid-template-columns: 1fr;
+  }
 }

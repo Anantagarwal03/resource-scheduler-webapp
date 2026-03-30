@@ -1,25 +1,21 @@
+// ===== STATE =====
 let stored = JSON.parse(localStorage.getItem("bookings")) || {};
-
 let allBookings;
 
 if (typeof stored !== "object" || stored === null) {
-  console.warn("Invalid bookings format. Resetting...");
   stored = {};
   localStorage.setItem("bookings", JSON.stringify(stored));
 }
 
-// 🔥 HANDLE OLD FORMAT (array → object)
+// Convert old format (array → object)
 if (Array.isArray(stored)) {
   allBookings = {};
-
   stored.forEach(b => {
     if (!allBookings[b.user]) {
       allBookings[b.user] = [];
     }
     allBookings[b.user].push(b);
   });
-
-  // Save corrected format
   localStorage.setItem("bookings", JSON.stringify(allBookings));
 } else {
   allBookings = stored;
@@ -27,22 +23,26 @@ if (Array.isArray(stored)) {
 
 let userData = JSON.parse(localStorage.getItem("loggedInUser"));
 
-// 🔒 STRICT PROTECTION (FIXED)
 if (!userData || !userData.email) {
   window.location.href = "index.html";
 }
 
 let currentUser = userData.email;
-
-// 👤 Per-user bookings
 let bookings = allBookings[currentUser] || [];
 
 let totalRooms = 5;
 let myChart = null;
 
-// ================= BOOK =================
+
+// ===== ACTIONS =====
+
+// BOOK
 function book() {
-  if (bookings.length >= totalRooms) {
+  const btn = document.getElementById("bookBtn");
+
+  let totalUsed = Object.values(allBookings).flat().length;
+
+  if (totalUsed >= totalRooms) {
     alert("No rooms available!");
     return;
   }
@@ -50,29 +50,43 @@ function book() {
   const input = document.getElementById("resource");
   const value = input.value.trim();
 
-  if (!value) {
-  alert("Enter a resource name");
-  return;
+  if (value.length < 2) {
+    alert("Enter valid resource");
+    return;
+  }
+
+  // UX feedback
+  btn.innerText = "Booking...";
+  btn.disabled = true;
+
+  setTimeout(() => {
+    const booking = {
+      name: value,
+      user: currentUser,
+      time: new Date().toLocaleString()
+    };
+
+    bookings.push(booking);
+    allBookings[currentUser] = bookings;
+
+    localStorage.setItem("bookings", JSON.stringify(allBookings));
+
+    input.value = "";
+
+    btn.innerText = "Book";
+    btn.disabled = false;
+
+    render();
+  }, 300);
 }
 
-  const booking = {
-    name: value,
-    user: currentUser,
-    time: new Date().toLocaleString()
-  };
 
-  bookings.push(booking);
-
-  // 🔥 SAVE PER USER
-  allBookings[currentUser] = bookings;
-  localStorage.setItem("bookings", JSON.stringify(allBookings));
-
-  input.value = "";
-  render();
-}
-
-// ================= DELETE =================
+// DELETE
 function deleteBooking(index) {
+  if (!confirm("Delete this booking?")) return;
+
+  if (index < 0 || index >= bookings.length) return;
+
   bookings.splice(index, 1);
 
   allBookings[currentUser] = bookings;
@@ -81,7 +95,8 @@ function deleteBooking(index) {
   render();
 }
 
-// ================= RENDER =================
+
+// ===== RENDER =====
 function render() {
   const userList = document.getElementById("user-list");
   const allList = document.getElementById("all-list");
@@ -93,65 +108,75 @@ function render() {
   userList.innerHTML = "";
   allList.innerHTML = "";
 
-welcome.innerText = "👋 Hello, " + currentUser;
+  welcome.innerText = "👋 Hello, " + currentUser;
 
-  // ✅ EMPTY STATE
+  // USER BOOKINGS
   if (bookings.length === 0) {
     userList.innerHTML = "<p style='color:#94a3b8'>No bookings yet</p>";
   }
 
   bookings.forEach((b, index) => {
-    let text = `
+    let li = document.createElement("li");
+
+    li.innerHTML = `
       <div>
         <strong>${b.name}</strong><br>
         <span class="booking-info">${b.user} • ${b.time}</span>
       </div>
-      <button class="delete-btn" onclick="deleteBooking(${index})">Delete</button>
+      <button class="delete-btn">Delete</button>
     `;
 
-    let li1 = document.createElement("li");
-    li1.innerHTML = text;
-    userList.appendChild(li1);
+    // attach delete event (no inline JS)
+    li.querySelector("button").addEventListener("click", () => {
+      deleteBooking(index);
+    });
 
-    let li2 = document.createElement("li");
-    li2.innerHTML = text;
-    allList.appendChild(li2);
+    userList.appendChild(li);
   });
 
-  let usedRooms = bookings.length;
-  if (usedRooms > totalRooms) usedRooms = totalRooms;
+  // ALL BOOKINGS
+  Object.values(allBookings).flat().forEach((b) => {
+    let li = document.createElement("li");
 
-  let availableRooms = totalRooms - usedRooms;
+    li.innerHTML = `
+      <div>
+        <strong>${b.name}</strong><br>
+        <span class="booking-info">${b.user} • ${b.time}</span>
+      </div>
+    `;
 
-  let usagePercent = Math.round((usedRooms / totalRooms) * 100);
+    allList.appendChild(li);
+  });
+
+  // STATS (GLOBAL, not per-user)
+  let totalUsed = Object.values(allBookings).flat().length;
+  let availableRooms = totalRooms - totalUsed;
+  if (availableRooms < 0) availableRooms = 0;
+
+  let usagePercent = Math.round((totalUsed / totalRooms) * 100);
   if (usagePercent > 100) usagePercent = 100;
 
-  total.innerText = bookings.length;
+  total.innerText = totalUsed;
   available.innerText = availableRooms;
   usage.innerText = usagePercent + "%";
-
-  // 🔍 DEBUG (optional)
-  // console.log("Current User:", currentUser);
-  // console.log("All Bookings:", allBookings);
-  // console.log("User Bookings:", bookings);
 
   updateChart();
 }
 
-// ================= CHART =================
+
+// CHART
 function updateChart() {
   const ctx = document.getElementById("chart");
 
   let countMap = {};
 
   Object.values(allBookings).flat().forEach(b => {
-  countMap[b.name] = (countMap[b.name] || 0) + 1;
-});
+    countMap[b.name] = (countMap[b.name] || 0) + 1;
+  });
 
   let labels = Object.keys(countMap);
   let data = Object.values(countMap);
 
-  // ✅ FIX: Handle empty chart
   if (labels.length === 0) {
     labels = ["No Data"];
     data = [0];
@@ -164,48 +189,19 @@ function updateChart() {
   myChart = new Chart(ctx, {
     type: "bar",
     data: {
-      labels: labels,
+      labels,
       datasets: [{
         label: "Bookings per Resource",
-        data: data
+        data,
+        backgroundColor: "#22c55e",
+        borderRadius: 6
       }]
-    },
-    options: {
-  responsive: true,
-  interaction: {
-  mode: 'index',
-  intersect: false
-},
-  plugins: {
-    legend: {
-      labels: {
-        color: "#cbd5f5"
-      }
     }
-  },
-  scales: {
-    x: {
-      ticks: {
-        color: "#94a3b8"
-      },
-      grid: {
-        display: false
-      }
-    },
-    y: {
-      ticks: {
-        color: "#94a3b8"
-      },
-      grid: {
-        color: "rgba(255,255,255,0.05)"
-      }
-    }
-  }
-}
   });
 }
 
-// ================= NAV =================
+
+// ===== NAVIGATION =====
 function showSection(section, element) {
   document.getElementById("dashboard-section").style.display = "none";
   document.getElementById("bookings-section").style.display = "none";
@@ -217,16 +213,15 @@ function showSection(section, element) {
   element.classList.add("active");
 }
 
-// ================= LOGOUT =================
+
+// ===== LOGOUT =====
 function logout() {
   localStorage.removeItem("loggedInUser");
   window.location.href = "index.html";
 }
 
-render();
 
-// ================= SETTINGS =================
-
+// ===== SETTINGS =====
 function checkStrength() {
   const pass = document.getElementById("newPassword").value;
   const text = document.getElementById("strengthText");
@@ -243,33 +238,26 @@ function checkStrength() {
   }
 }
 
-// Show email
 document.getElementById("userEmail").innerText = currentUser;
 
-// Change password
 function changePassword() {
   const newPass = document.getElementById("newPassword").value;
-  if (newPass.length < 6) {
-  alert("Password must be at least 6 characters");
-  return;
-}
-
   const confirmPass = document.getElementById("confirmPassword").value;
 
-if (!newPass || !confirmPass) {
-  alert("Fill all fields");
-  return;
-}
+  if (!newPass || !confirmPass) {
+    alert("Fill all fields");
+    return;
+  }
 
-if (newPass !== confirmPass) {
-  alert("Passwords do not match");
-  return;
-}
+  if (newPass !== confirmPass) {
+    alert("Passwords do not match");
+    return;
+  }
 
-if (newPass.length < 6) {
-  alert("Password must be at least 6 characters");
-  return;
-}
+  if (newPass.length < 6) {
+    alert("Password must be at least 6 characters");
+    return;
+  }
 
   let users = JSON.parse(localStorage.getItem("users")) || [];
 
@@ -279,20 +267,22 @@ if (newPass.length < 6) {
     }
     return u;
   });
-localStorage.setItem("users", JSON.stringify(users));
 
-const msg = document.getElementById("passwordMsg");
-msg.innerText = "Password updated successfully!";
-msg.style.display = "block";
+  localStorage.setItem("users", JSON.stringify(users));
 
-setTimeout(() => {
-  msg.style.display = "none";
-}, 2000);
+  const msg = document.getElementById("passwordMsg");
+  msg.innerText = "Password updated successfully!";
+  msg.style.display = "block";
 
-document.getElementById("newPassword").value = "";
+  setTimeout(() => {
+    msg.style.display = "none";
+  }, 2000);
+
+  document.getElementById("newPassword").value = "";
 }
 
-// Clear bookings
+
+// CLEAR BOOKINGS
 function clearBookings() {
   if (!confirm("Delete all your bookings?")) return;
 
@@ -302,3 +292,18 @@ function clearBookings() {
 
   render();
 }
+
+
+// ===== EVENTS =====
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("bookBtn").addEventListener("click", book);
+
+  document.querySelectorAll(".sidebar li").forEach(li => {
+    li.addEventListener("click", function () {
+      const section = this.id.replace("nav-", "");
+      showSection(section, this);
+    });
+  });
+
+  render();
+});
