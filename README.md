@@ -99,12 +99,6 @@ Or create a new account using the signup page.
 
 ---
 
-## 🎥 Demo Video (Optional)
-
-(Add your screen recording link here)
-
----
-
 ## ⚙️ How It Works
 
 * User data and bookings are stored in localStorage
